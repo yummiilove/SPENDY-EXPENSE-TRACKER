@@ -1,0 +1,109 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spendly | Expense Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main>
+        <div class="app">
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <h1>SPENDLY</h1>
+            </aside>
+
+            <!-- Main Dashboard Content -->
+            <div class="dashboard-content">
+
+                <section class="main-content">
+                    <h2>Dashboard</h2>
+                    <p>Your personal finance management tool.</p>
+                </section>
+
+                <!-- Financial Summary Cards -->
+                <section class="summary-grid">
+                    <div class="balance-card">
+                        <h3>Current Balance</h3>
+                        <p>₹0.00</p>
+                    </div>
+
+                    <div class="income-card">
+                        <h3>Total Income</h3>
+                        <p>₹0.00</p>
+                    </div>
+
+                    <div class="expense-card">
+                        <h3>Total Expenses</h3>
+                        <p>₹0.00</p>
+                    </div>
+                </section>
+
+                <!-- Add Transaction Form -->
+                <section class="transaction-form-panel">
+                    <h2>Add Transaction</h2>
+
+                    <div class="transaction-fields">
+
+                        <div class="form-group">
+                            <label for="transactionTitle">Transaction Name</label>
+                            <input
+                                id="transactionTitle"
+                                type="text"
+                                placeholder="e.g. College fees"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transactionAmount">Amount (₹)</label>
+                            <input
+                                id="transactionAmount"
+                                type="number"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="e.g. 500"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transactionType">Transaction Type</label>
+                            <select id="transactionType">
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transactionCategory">Category</label>
+                            <input
+                                id="transactionCategory"
+                                type="text"
+                                placeholder="e.g. Food"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="transactionDate">Date</label>
+                            <input id="transactionDate" type="date">
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="addTransactionBtn"
+                        class="add-transaction-btn"
+                        type="button"
+                    >
+                        Add Transaction
+                    </button>
+                </section>
+
+            </div>
+        </div>
+    </main>
+<script src="app.js"></script>    
+</body>
+</html>
