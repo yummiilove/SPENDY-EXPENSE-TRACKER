@@ -210,3 +210,58 @@ body {
         padding: 20px;
     }
 }
+
+.transaction-history-panel {
+    margin-top: 28px;
+    padding: 24px;
+    background: #1b1d1b;
+    border: 1px solid #303330;
+    border-radius: 16px;
+}
+
+.transaction-history-panel h2 {
+    margin: 0 0 20px;
+    color: #f4f4ec;
+    font-size: 20px;
+}
+
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #242724;
+    border-radius: 10px;
+}
+
+.transaction-info h3 {
+    margin: 0 0 6px;
+    color: #f4f4ec;
+    font-size: 15px;
+}
+
+.transaction-info p {
+    margin: 0;
+    color: #a6aaa4;
+    font-size: 13px;
+}
+
+.transaction-amount {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.transaction-amount.income {
+    color: #a3ff6f;
+}
+
+.transaction-amount.expense {
+    color: #ff7777;
+}
