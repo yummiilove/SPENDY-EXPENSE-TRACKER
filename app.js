@@ -13,13 +13,38 @@ const totalBalance = document.getElementById("totalBalance");
 
 let transactions = [];
 
-// Load saved transactions
+// Generate a unique ID for each transaction
+function generateTransactionId() {
+    return Date.now() + Math.random();
+}
+
+// Load saved transactions from LocalStorage
 function loadTransactions() {
     try {
         const saved = localStorage.getItem("spendytransactions");
         const parsed = saved ? JSON.parse(saved) : [];
 
         transactions = Array.isArray(parsed) ? parsed : [];
+
+        // Give IDs to older transactions that don't have one
+        let updatedIds = false;
+
+        transactions = transactions.map(function (transaction) {
+            if (transaction.id === undefined || transaction.id === null) {
+                updatedIds = true;
+
+                return {
+                    ...transaction,
+                    id: generateTransactionId()
+                };
+            }
+
+            return transaction;
+        });
+
+        if (updatedIds) {
+            saveTransactions();
+        }
     } catch (error) {
         console.error("Error loading transactions:", error);
         transactions = [];
@@ -29,7 +54,7 @@ function loadTransactions() {
     updateSummary();
 }
 
-// Save transactions
+// Save transactions to LocalStorage
 function saveTransactions() {
     try {
         localStorage.setItem(
@@ -42,7 +67,7 @@ function saveTransactions() {
     }
 }
 
-// Add a transaction
+// Add a new transaction
 addTransactionBtn.addEventListener("click", function () {
     const title = transactionTitle.value.trim();
     const amountText = transactionAmount.value.trim();
@@ -51,18 +76,21 @@ addTransactionBtn.addEventListener("click", function () {
     const category = transactionCategory.value.trim();
     const date = transactionDate.value;
 
+    // Validate required fields
     if (!title || !amountText || !type || !category || !date) {
         alert("Please fill in all fields before adding a transaction.");
         return;
     }
 
+    // Validate amount
     if (!Number.isFinite(amount) || amount <= 0) {
         alert("Please enter a valid amount greater than 0.");
         return;
     }
 
+    // Create transaction object
     const transaction = {
-        id: Date.now() + Math.random(),
+        id: generateTransactionId(),
         title: title,
         amount: amount,
         type: type,
@@ -70,7 +98,15 @@ addTransactionBtn.addEventListener("click", function () {
         date: date
     };
 
+    // Update application data
     transactions.push(transaction);
+
+    // Save updated data
+    saveTransactions();
+
+    // Refresh the interface
+    renderTransactions();
+    updateSummary();
 
     // Clear the form
     transactionTitle.value = "";
@@ -79,22 +115,19 @@ addTransactionBtn.addEventListener("click", function () {
     transactionDate.value = "";
     transactionType.selectedIndex = 0;
 
-    // Update the dashboard
-    saveTransactions();
-    renderTransactions();
-    updateSummary();
-
     console.log("Transaction added:", transaction);
 });
 
-// Display transactions
+// Display all transactions
 function renderTransactions() {
     transactionList.innerHTML = "";
 
     transactions.forEach(function (transaction) {
+        // Create transaction row
         const item = document.createElement("div");
         item.className = "transaction-item";
 
+        // Create transaction information
         const info = document.createElement("div");
         info.className = "transaction-info";
 
@@ -108,31 +141,65 @@ function renderTransactions() {
         info.appendChild(title);
         info.appendChild(details);
 
+        // Create amount display
         const amount = document.createElement("div");
         amount.className = "transaction-amount";
 
         const sign = transaction.type === "income" ? "+" : "−";
 
         amount.textContent =
-            `${sign}₹${Number(transaction.amount).toLocaleString("en-IN")}`;
+            `${sign}₹${Number(transaction.amount).toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
 
         amount.classList.add(transaction.type);
 
+        // Create a separate Delete button for this transaction
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.className = "delete-btn";
+        deleteBtn.dataset.id = String(transaction.id);
+
+        // Delete the selected transaction
+        deleteBtn.addEventListener("click", function () {
+            const id = Number(deleteBtn.dataset.id);
+
+            transactions = transactions.filter(function (t) {
+                return t.id !== id;
+            });
+
+            saveTransactions();
+            renderTransactions();
+            updateSummary();
+        });
+
+        // Assemble the complete transaction row
         item.appendChild(info);
         item.appendChild(amount);
+        item.appendChild(deleteBtn);
+
         transactionList.appendChild(item);
     });
 }
 
-// Calculate summary
+// Calculate income, expenses, and balance
 function updateSummary() {
     const income = transactions
-        .filter(t => t.type === "income")
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .filter(function (t) {
+            return t.type === "income";
+        })
+        .reduce(function (sum, t) {
+            return sum + Number(t.amount);
+        }, 0);
 
     const expense = transactions
-        .filter(t => t.type === "expense")
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .filter(function (t) {
+            return t.type === "expense";
+        })
+        .reduce(function (sum, t) {
+            return sum + Number(t.amount);
+        }, 0);
 
     const balance = income - expense;
 
@@ -158,5 +225,5 @@ function updateSummary() {
         balance < 0 ? "#CD5C5C" : "#a3ff6f";
 }
 
-// Initialize dashboard
+// Initialize the dashboard
 loadTransactions();
